@@ -8,6 +8,17 @@
       <div class="col-md-4"><div class="card bg-warning text-dark p-3 text-center"><h3>{{ stats.appointments }}</h3><small>Appointments</small></div></div>
     </div>
 
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-header">Hospital Analytics</div>
+                <div class="card-body">
+                    <canvas id="adminChart" style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
       <div class="col-md-4">
         <div class="card shadow">
@@ -62,15 +73,38 @@
 
 <script>
 import axios from 'axios'
+import Chart from 'chart.js/auto' // [NEW] Import Chart.js
+
 export default {
-  data() { return { stats: {}, doctors: [], newDocName: '', newDocPass: '', newDocSpec: '', search: '', editId: null, editName: '', editSpec: '' } },
+  data() { return { stats: {}, doctors: [], newDocName: '', newDocPass: '', newDocSpec: '', search: '', editId: null, editName: '', editSpec: '', chartInstance: null } },
   async mounted() { this.refresh(); },
   methods: {
     async refresh() {
       const s = await axios.get('http://127.0.0.1:5000/api/admin/dashboard');
       this.stats = s.data;
       this.loadDocs();
+      this.renderChart(); // [NEW] Render Chart after data load
     },
+    
+    // [NEW] Chart Rendering Logic
+    renderChart() {
+        const ctx = document.getElementById('adminChart');
+        if (this.chartInstance) this.chartInstance.destroy(); // Destroy old chart to prevent overlay bugs
+        
+        this.chartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Doctors', 'Patients', 'Appointments'],
+                datasets: [{
+                    label: 'Hospital Data',
+                    data: [this.stats.doctors, this.stats.patients, this.stats.appointments],
+                    backgroundColor: ['#0d6efd', '#198754', '#ffc107']
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    },
+
     async loadDocs() {
       const d = await axios.get(`http://127.0.0.1:5000/api/doctors?search=${this.search}`);
       this.doctors = d.data;
