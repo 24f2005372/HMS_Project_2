@@ -51,9 +51,14 @@ export default {
         const res = await axios.post('http://127.0.0.1:5000/api/login', {
           username: this.username, password: this.password
         });
-        this.$emit('login-success', res.data); // Notify App.vue
         
-        // Redirect based on Role
+        // [FIX] Save User to Browser Storage Immediately
+        localStorage.setItem('user', JSON.stringify(res.data));
+        
+        // Notify Parent
+        this.$emit('login-success', res.data);
+        
+        // Redirect
         if (res.data.role === 'admin') this.$router.push('/admin');
         else if (res.data.role === 'doctor') this.$router.push('/doctor');
         else this.$router.push('/patient');
@@ -66,8 +71,7 @@ export default {
           username: this.regUser, password: this.regPass
         });
         this.message = 'Registered! You can now Login.';
-        this.regUser = '';
-        this.regPass = '';
+        this.regUser = ''; this.regPass = '';
       } catch (e) { this.message = 'Error Registering (Username might exist)'; }
     }
   }

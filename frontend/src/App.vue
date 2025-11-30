@@ -1,9 +1,15 @@
 <template>
   <div id="app">
-    <nav v-if="user">
-      <span>Welcome, {{ user.username }}</span>
-      <button @click="logout">Logout</button>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4" v-if="user">
+      <div class="container">
+        <span class="navbar-brand">🏥 HMS Project</span>
+        <div class="d-flex align-items-center">
+          <span class="text-white me-3">Welcome, {{ user.username }} ({{ user.role }})</span>
+          <button @click="logout" class="btn btn-outline-danger btn-sm">Logout</button>
+        </div>
+      </div>
     </nav>
+    
     <router-view @login-success="setUser"/>
   </div>
 </template>
@@ -11,10 +17,21 @@
 <script>
 export default {
   data() { return { user: null } },
+  mounted() {
+    // [FIX] Persistent Login Check
+    const stored = localStorage.getItem('user');
+    if (stored) {
+      this.user = JSON.parse(stored);
+    }
+  },
   methods: {
-    setUser(userData) { this.user = userData },
+    setUser(userData) { 
+      this.user = userData;
+      localStorage.setItem('user', JSON.stringify(userData));
+    },
     logout() {
       this.user = null;
+      localStorage.removeItem('user');
       this.$router.push('/');
     }
   }
@@ -22,10 +39,5 @@ export default {
 </script>
 
 <style>
-#app { font-family: sans-serif; padding: 20px; }
-nav { background: #eee; padding: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; }
-button { cursor: pointer; padding: 5px 10px; }
-input { display: block; margin: 10px 0; padding: 8px; width: 100%; max-width: 300px; }
-.card { border: 1px solid #ccc; padding: 15px; margin: 10px 0; border-radius: 5px; }
-.badge { background: #007bff; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; }
+#app { font-family: sans-serif; }
 </style>
