@@ -181,5 +181,16 @@ def export_csv(user_id):
     # Since we are simulating for submission safety without Redis running locally:
     return jsonify({'message': 'Job Triggered: CSV will be emailed (Simulated)'})
 
+# [NEW] Patient Cancel Route (Was missing)
+@app.route('/api/patient/cancel/<int:id>', methods=['DELETE'])
+def cancel_appt(id):
+    appt = Appointment.query.get(id)
+    if appt:
+        appt.status = 'Cancelled'
+        db.session.commit()
+        return jsonify({'message': 'Appointment Cancelled'})
+    return jsonify({'message': 'Error'}), 400
+
+
 if __name__ == '__main__':
     app.run(debug=True)

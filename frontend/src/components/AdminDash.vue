@@ -32,10 +32,23 @@
               <thead><tr><th>Name</th><th>Spec</th><th>Actions</th></tr></thead>
               <tbody>
                 <tr v-for="doc in doctors" :key="doc.id">
-                  <td>{{ doc.username }}</td>
-                  <td>{{ doc.spec }}</td>
                   <td>
-                    <button @click="deleteDoctor(doc.id)" class="btn btn-danger btn-sm">Delete</button>
+                    <span v-if="editId !== doc.id">{{ doc.username }}</span>
+                    <input v-else v-model="editName" class="form-control form-control-sm">
+                  </td>
+                  <td>
+                    <span v-if="editId !== doc.id">{{ doc.spec }}</span>
+                    <input v-else v-model="editSpec" class="form-control form-control-sm">
+                  </td>
+                  <td>
+                    <div v-if="editId !== doc.id">
+                        <button @click="startEdit(doc)" class="btn btn-warning btn-sm me-1">Edit</button>
+                        <button @click="deleteDoctor(doc.id)" class="btn btn-danger btn-sm">Delete</button>
+                    </div>
+                    <div v-else>
+                        <button @click="saveEdit(doc.id)" class="btn btn-success btn-sm me-1">Save</button>
+                        <button @click="editId = null" class="btn btn-secondary btn-sm">Cancel</button>
+                    </div>
                   </td>
                 </tr>
               </tbody>
@@ -50,10 +63,8 @@
 <script>
 import axios from 'axios'
 export default {
-  data() { return { stats: {}, doctors: [], newDocName: '', newDocPass: '', newDocSpec: '', search: '' } },
-  async mounted() {
-    this.refresh();
-  },
+  data() { return { stats: {}, doctors: [], newDocName: '', newDocPass: '', newDocSpec: '', search: '', editId: null, editName: '', editSpec: '' } },
+  async mounted() { this.refresh(); },
   methods: {
     async refresh() {
       const s = await axios.get('http://127.0.0.1:5000/api/admin/dashboard');
@@ -76,6 +87,18 @@ export default {
         await axios.delete(`http://127.0.0.1:5000/api/doctor/${id}`);
         this.refresh();
       }
+    },
+    startEdit(doc) {
+        this.editId = doc.id;
+        this.editName = doc.username;
+        this.editSpec = doc.spec;
+    },
+    async saveEdit(id) {
+        await axios.put(`http://127.0.0.1:5000/api/doctor/${id}`, {
+            username: this.editName, spec: this.editSpec
+        });
+        this.editId = null;
+        this.refresh();
     }
   }
 }
