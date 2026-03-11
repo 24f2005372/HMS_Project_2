@@ -1,6 +1,3 @@
-Here is the correctly formatted **README.md** file content. You can copy the code block below entirely and paste it into your `README.md` file.
-
-````markdown
 # Hospital Management System V2 (Decoupled Architecture)
 ### Modern Application Development II - Final Submission
 
