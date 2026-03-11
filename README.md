@@ -74,19 +74,19 @@ Use these credentials to test the different roles:
 ### 1\. Admin (Pre-created)
 
   - **Username:** `admin`
-  - **Password:** `123`
+  - **Password:** `admin123`
   - **Features:** Dashboard Charts, Manage Doctors (CRUD), Search.
 
 ### 2\. Doctor (Create via Admin first)
 
   - **Suggested Username:** `House`
-  - **Suggested Password:** `123`
+  - **Suggested Password:** `admin123`
   - **Features:** View Appointments, Medical History Modal, Complete Diagnosis.
 
 ### 3\. Patient (Register via App)
 
   - **Suggested Username:** `John`
-  - **Suggested Password:** `123`
+  - **Suggested Password:** `admin123`
   - **Features:** Book Appt, Cancel Appt, Search Doctors, Export History (CSV).
 
 -----
