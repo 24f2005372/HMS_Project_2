@@ -1,0 +1,137 @@
+openapi: 3.0.0
+info:
+  title: Hospital Management System API
+  description: API for managing Doctors, Patients, and Appointments.
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000/api
+    description: Local Development Server
+
+paths:
+  /login:
+    post:
+      summary: Authenticate user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login Successful
+        '401':
+          description: Invalid Credentials
+
+  /register:
+    post:
+      summary: Register a new patient
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                address:
+                  type: string
+      responses:
+        '201':
+          description: Registered Successfully
+
+  /admin/dashboard:
+    get:
+      summary: Get system statistics
+      responses:
+        '200':
+          description: Returns counts of doctors, patients, and appointments
+
+  /doctors:
+    get:
+      summary: Get list of doctors
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Search term for name or specialization
+      responses:
+        '200':
+          description: List of doctors
+    post:
+      summary: Add a new doctor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                specialization:
+                  type: string
+      responses:
+        '200':
+          description: Doctor Added
+
+  /patient/book:
+    post:
+      summary: Book an appointment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                doctor_id:
+                  type: integer
+                date:
+                  type: string
+                time:
+                  type: string
+      responses:
+        '200':
+          description: Booked
+        '400':
+          description: Slot Taken
+
+  /patient/cancel/{id}:
+    delete:
+      summary: Cancel an appointment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Cancelled
+
+  /export_csv/{user_id}:
+    get:
+      summary: Trigger Async CSV Export
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Job Triggered

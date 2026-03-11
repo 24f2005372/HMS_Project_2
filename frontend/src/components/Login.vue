@@ -70,8 +70,12 @@ export default {
         await axios.post('http://127.0.0.1:5000/api/register', {
           username: this.regUser, password: this.regPass
         });
-        this.message = 'Registered! You can now Login.';
-        this.regUser = ''; this.regPass = '';
+        const res = await axios.post('http://127.0.0.1:5000/api/login', {
+          username: this.regUser, password: this.regPass
+        });
+        localStorage.setItem('user', JSON.stringify(res.data));
+        this.$emit('login-success', res.data);
+        this.$router.push('/patient');
       } catch (e) { this.message = 'Error Registering (Username might exist)'; }
     }
   }
